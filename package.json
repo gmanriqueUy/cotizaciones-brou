@@ -1,0 +1,27 @@
+{
+  "name": "cotizaciones-bcu",
+  "version": "0.0.0",
+  "description": "Cotizaciones provistas por el BCU",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gmanriqueUy/cotizaciones-bcu.git"
+  },
+  "author": "Gonzalo Manrique",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/gmanriqueUy/cotizaciones-bcu/issues"
+  },
+  "homepage": "https://github.com/gmanriqueUy/cotizaciones-bcu#readme",
+  "devDependencies": {
+    "cz-conventional-changelog": "^2.0.0"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  }
+}
