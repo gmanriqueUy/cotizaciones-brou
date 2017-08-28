@@ -4,6 +4,9 @@ import xlsx from 'xlsx';
 import async from 'async';
 import moment from 'moment';
 
+import db from './config/db-connection';
+import CurrencyDay from './models/currency-day';
+
 // Constants
 import COL from './constants/columns';
 import CURR from './constants/currencies';
@@ -11,7 +14,7 @@ import FILE_URL from './constants/ine-file-url.js';
 
 const INT_REGEX = /^\d+$/;
 const FLOAT_REGEX = /^\d+([\.\,]\d+)?$/;
-const FILE = './cotizaciones.xls';
+// const FILE = './test/cotizaciones.xls';
 
 moment.locale('es');
 
@@ -19,12 +22,15 @@ function seed() {
 
 	async.waterfall([
 
+		// Connects to database
+		db.connect,
+
 		// Download the file
-		// downloadFile,
-		async.apply(
-			fs.readFile,
-			FILE
-		),
+		downloadFile,
+		// async.apply(
+		// 	fs.readFile,
+		// 	FILE
+		// ),
 
 		// Read the file and discard the unuseful lines
 		readFile,
@@ -34,17 +40,16 @@ function seed() {
 		makeArrayOfDays,
 
 		// Save the currencies into the database
-		save
+		CurrencyDay.insertDays
 
 	], (err) => {
 		if (err) {
 			throw err;
 		}
-	});
-}
 
-function save(days, cbSave) {
-	console.log(days[0]);
+		console.log("Seeded. :)");
+		return process.exit();
+	});
 }
 
 /**
@@ -68,7 +73,7 @@ function makeArrayOfDays(lines, cb) {
 		date = getDate(day, month, year);
 
 		days[i] = {
-			date,
+			date: date.toDate(),
 			currencies: [
 				{
 					iso: CURR.USD,
@@ -92,9 +97,8 @@ function makeArrayOfDays(lines, cb) {
 				}
 			]
 		};
-
 	});
-	
+
 	return cb(null, days);
 }
 
@@ -111,13 +115,32 @@ function getValue(value) {
  * @param {number} year
  */
 function getDate(day, month, year) {
-	let date = `${day}-${month.toLowerCase()}.-${year}`;
-	return moment(
-		date, [
-			'D-MMMM-YYYY',
-			'D-MMM-YYYY'
-		]
-	);
+
+	let date = `${day}-${purgeMonth(month)}.-${year}`;
+
+	return moment(date, 'D-MMM-YYYY');
+}
+
+/**
+ * Remove trailing spaces and lowerizes the month
+ * Also standarize the 'code'
+ * (e.g. 'set', 'sep' and 'septiembre' is returned as 'sep') 
+ * @param {string} month String found in the month column of the file
+ */
+function purgeMonth(month) {
+	month = month.toLowerCase().trim();
+
+	switch (month) {
+		case 'set':
+			month = 'sep';
+			break;
+
+		case 'agosto':
+			month = 'ago';
+			break;
+	}
+
+	return month;
 }
 
 /**
@@ -166,7 +189,7 @@ function downloadFile(cb) {
 			return cb(err);
 		});
 
-		response.on('end',() => {
+		response.on('end', () => {
 			return cb(null, Buffer.concat(buffers));
 		});
 	});
