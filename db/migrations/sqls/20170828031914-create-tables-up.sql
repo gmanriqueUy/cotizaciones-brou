@@ -10,11 +10,6 @@ CREATE TABLE `currencyDay` (
   `sell` float(5,2) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-CREATE TABLE `day` (
-  `date` date NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-
 ALTER TABLE `currency`
   ADD PRIMARY KEY (`iso`);
 
@@ -22,10 +17,5 @@ ALTER TABLE `currencyDay`
   ADD PRIMARY KEY (`iso`,`date`),
   ADD KEY `day` (`date`);
 
-ALTER TABLE `day`
-  ADD PRIMARY KEY (`date`);
-
-
 ALTER TABLE `currencyDay`
-  ADD CONSTRAINT `currencyDay_ibfk_1` FOREIGN KEY (`iso`) REFERENCES `currency` (`iso`),
-  ADD CONSTRAINT `currencyDay_ibfk_2` FOREIGN KEY (`date`) REFERENCES `day` (`date`);
+  ADD CONSTRAINT `currencyDay_ibfk_1` FOREIGN KEY (`iso`) REFERENCES `currency` (`iso`);
