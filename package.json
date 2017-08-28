@@ -8,7 +8,10 @@
     "test": "mocha --recursive './test' --compilers js:babel-core/register",
     "compile": "./node_modules/.bin/babel --presets es2015,stage-0 -d lib/ src/",
     "preseed": "npm run compile",
-    "seed": "node lib/seed.js"
+    "seed": "node lib/seed.js",
+    "migrate-up": "cd db && node ../node_modules/db-migrate/bin/db-migrate up",
+    "migrate-down": "cd db && node ../node_modules/db-migrate/bin/db-migrate down",
+    "migrate-reset": "cd db && node ../node_modules/db-migrate/bin/db-migrate reset"
   },
   "repository": {
     "type": "git",
@@ -29,11 +32,11 @@
     "babel-preset-stage-0": "^6.22.0",
     "body-parser": "~1.16.0",
     "cookie-parser": "~1.4.3",
-    "db-migrate": "^0.10.0-beta.23",
     "debug": "~2.6.0",
     "express": "~4.14.1",
     "moment": "^2.18.1",
     "morgan": "~1.7.0",
+    "mysql": "^2.14.1",
     "pug": "^2.0.0-beta11",
     "xlsx": "^0.11.3"
   },
@@ -42,6 +45,8 @@
     "chai": "^3.5.0",
     "chai-as-promised": "^6.0.0",
     "cz-conventional-changelog": "^2.0.0",
+    "db-migrate": "^0.10.0-beta.23",
+    "db-migrate-mysql": "^1.1.10",
     "eslint": "^3.1.1",
     "eslint-config-airbnb": "^14.1.0",
     "eslint-plugin-import": "^2.2.0",
