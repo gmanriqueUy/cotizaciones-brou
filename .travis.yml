@@ -12,4 +12,5 @@ before_script:
   - yarn compile
   - mysql -u root -e "CREATE USER 'cotizacionesBrou'@'localhost' IDENTIFIED BY 'cotizacionesBrou'"
   - mysql -u root -e "GRANT ALL ON cotizacionesBrou.* TO 'cotizacionesBrou'@'localhost'"
+  - mysql -u root -e "CREATE DATABASE IF NOT EXISTS cotizacionesBrou;"
   - yarn migrate-up
