@@ -1,4 +1,6 @@
 language: node_js
+addons:
+  mariadb: '10.1'
 cache:
   yarn: true
   directories:
@@ -8,3 +10,6 @@ notifications:
 node_js: '6'
 before_script:
   - yarn compile
+  - mysql -u root -e "CREATE USER 'cotizacionesBrou'@'localhost' IDENTIFIED BY 'cotizacionesBrou'"
+  - mysql -u root -e "GRANT ALL ON `cotizacionesBrou`.* TO 'cotizacionesBrou'@'localhost'"
+  - yarn migrate-up
