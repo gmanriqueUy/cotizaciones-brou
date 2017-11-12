@@ -5,7 +5,7 @@
   "main": "lib/app.js",
   "scripts": {
     "start": "nodemon --debug=5858 --watch ./src --exec babel-node ./src",
-    "test": "jest --coverage",
+    "test": "jest",
     "test:watch": "jest --watch",
     "compile": "./node_modules/.bin/babel -d lib/ src/",
     "preseed": "npm run compile",
