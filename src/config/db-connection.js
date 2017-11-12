@@ -18,7 +18,7 @@ db = {
  */
 function connect(cb) {
   _pool = mysql.createPool(DB);
-  cb();
+  cb && cb();
 }
 
 /**

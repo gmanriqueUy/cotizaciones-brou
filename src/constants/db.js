@@ -5,4 +5,5 @@ export default {
 	socketPath: '/var/run/mysqld/mysqld.sock',
 	host: 'localhost',
 	database: 'cotizacionesBrou',
+	timezone: 'Z'
 }

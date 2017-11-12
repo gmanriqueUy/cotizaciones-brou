@@ -14,7 +14,7 @@ import FILE_URL from './constants/ine-file-url.js';
 
 const INT_REGEX = /^\d+$/;
 const FLOAT_REGEX = /^\d+([\.\,]\d+)?$/;
-// const FILE = './test/cotizaciones.xls';
+const FILE = './test/cotizaciones.xls';
 
 moment.locale('es');
 
@@ -22,7 +22,7 @@ function seed() {
 
 	async.waterfall([
 
-		// Connects to database
+		// Connect to database
 		db.connect,
 
 		// Download the file
@@ -32,8 +32,20 @@ function seed() {
 		// 	FILE
 		// ),
 
-		// Read the file and discard the unuseful lines
-		readFile,
+		function readFileAndGetLastDate(theFile, cbReadFileAndGetLastDate) {
+
+			async.parallel({
+				// Read the file and discard the unuseful lines
+				lines: async.apply(
+					readFile,
+					theFile
+				),
+
+				// Get last date existing on DB
+				lastDate: CurrencyDay.getLastDate
+			}, cbReadFileAndGetLastDate);
+
+		},
 
 		// Parse the array of lines and transform it to an
 		// array of days
@@ -42,12 +54,12 @@ function seed() {
 		// Save the currencies into the database
 		CurrencyDay.insertDays
 
-	], (err) => {
+	], (err, inserted) => {
 		if (err) {
 			throw err;
 		}
 
-		console.log("Seeded. :)");
+		console.log(`Seeded with ${inserted} rows. :)`);
 		return process.exit();
 	});
 }
@@ -57,22 +69,31 @@ function seed() {
  * @param {Array} lines - Array of useful lines
  * @param {function(Error, Array)} cb - The callback
  */
-function makeArrayOfDays(lines, cb) {
+function makeArrayOfDays(data, cb) {
 
-	let year,
+	let {
+		lastDate,
+		lines
+	} = data,
+		year,
 		month,
 		day,
 		date,
 		days = [];
 
-	lines.forEach((line, i) => {
-
+	for (let i = 0, line; i < lines.length; i++) {
+		
+		line = lines[i];
 		day = line[COL.DAY];
 		month = line[COL.MONTH] || month;
 		year = line[COL.YEAR] || year;
 		date = getDate(day, month, year);
+		
+		console.log(date);
 
-		days[i] = {
+		if (date.isSameOrBefore(lastDate)) continue;
+
+		days.push({
 			date: date.toDate(),
 			currencies: [
 				{
@@ -96,8 +117,8 @@ function makeArrayOfDays(lines, cb) {
 					sell: getValue(line[COL.EUR_SELL])
 				}
 			]
-		};
-	});
+		});
+	}
 
 	return cb(null, days);
 }
@@ -132,9 +153,12 @@ function purgeMonth(month) {
 
 	switch (month) {
 		case 'set':
+		case 'setiembre':
+		case 'septiembre':
 			month = 'sep';
 			break;
 
+		
 		case 'agosto':
 			month = 'ago';
 			break;
@@ -150,6 +174,8 @@ function purgeMonth(month) {
  * @param {function(Error,Array)} cb - The callback
  */
 function readFile(file, cb) {
+
+	console.log("\nReading file...");
 
 	/*
 	 * Opens the file and get array of arrays
@@ -169,27 +195,43 @@ function readFile(file, cb) {
 		}
 	});
 
+	console.log(`Found ${usefulLines.length} useful lines`);
+
 	return cb(null, usefulLines);
 }
 
 /**
  * Download the INE file
  * 
- * @param {function(Error,Bufer)} cb 
+ * @param {function(Error,Buffer)} cb 
  */
 function downloadFile(cb) {
-	let buffers = [];
+	let buffers = [],
+	fileSize = 0;
 
 	http.get(FILE_URL, (response) => {
+
+		console.log("Downloading file...");
+
+		let progressInterval = setInterval(() => {
+			console.log(fileSize + " bytes");
+		}, 500);
+		
 		response.on('data', (chunk) => {
 			buffers.push(chunk);
+			fileSize += chunk.byteLength;
 		});
-
+		
 		response.on('error', (err) => {
 			return cb(err);
 		});
-
+		
 		response.on('end', () => {
+			console.log(fileSize + " bytes");
+			console.log("File downloaded");
+
+			clearInterval(progressInterval);
+
 			return cb(null, Buffer.concat(buffers));
 		});
 	});

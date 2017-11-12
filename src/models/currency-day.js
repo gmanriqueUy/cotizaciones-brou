@@ -1,8 +1,53 @@
 import db from "../config/db-connection";
 
 const CurrencyDay = {
+	getLastDate,
+	getRatesFromDate,
 	insertDays
 };
+
+/**
+ * Return rates from given date
+ * @date 
+ */
+function getRatesFromDate(date, cb) {
+	db.connection().query(
+		`SELECT *
+		FROM currencyDay
+		WHERE date = (
+			SELECT MAX(date)
+			FROM currencyDay
+			WHERE date <= ?
+		)`,
+		date,
+		(err, rates) => {
+			if(err) return cb(err)
+
+			return cb(null, rates)
+		}
+	)
+}
+
+/**
+ * Return last date existing on DB
+ */
+function getLastDate(cb) {
+	db.connection().query(
+		`SELECT MAX(date) lastDate
+		FROM currencyDay
+		`, (err, results) => {
+			if(err) return cb(err);
+
+			if(results.length !== 1) {
+				return cb(new Error(
+					'Forgot how to do max!'
+				));
+			}
+
+			return cb(null, results[0].lastDate);
+		}
+	);
+}
 
 /**
  * 
@@ -11,6 +56,10 @@ const CurrencyDay = {
  */
 function insertDays(days, cb) {
 	let inserts = [];
+
+	if(!days || days.length === 0) {
+		return cb(null, 0);
+	}
 
 	days.forEach(day => {
 		day.currencies.forEach(currency => {
@@ -31,10 +80,10 @@ function insertDays(days, cb) {
 			sell
 		) VALUES ?`, [
 			inserts
-		], (err) => {
+		], (err, result) => {
 			if(err) return cb(err);
 
-			return cb(null);
+			return cb(null, result.affectedRows);
 		}
 	);
 }
