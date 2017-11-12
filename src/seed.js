@@ -88,8 +88,6 @@ function makeArrayOfDays(data, cb) {
 		month = line[COL.MONTH] || month;
 		year = line[COL.YEAR] || year;
 		date = getDate(day, month, year);
-		
-		console.log(date);
 
 		if (date.isSameOrBefore(lastDate)) continue;
 
