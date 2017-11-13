@@ -2,7 +2,9 @@ import express from 'express'
 import async from 'async'
 import { param } from 'express-validator/check'
 
-import internalError from '../helpers/internal-error'
+import error from '../helpers/error'
+
+import checkErrors from '../helpers/check-errors'
 
 import CurrencyDay from '../models/currency-day'
 
@@ -12,32 +14,41 @@ const router = express.Router()
 
 router.get(
 	'/:date', [
-		param('iso', 'Invalid ISO')
-			.isAlpha()
-	], getLatest
+		param('date', "Date must be with YYYY-MM-DD format or 'latest'")
+			.custom((date) => {
+				return (!isNaN(Date.parse(date)) || date === 'latest')
+			}),
+
+		checkErrors
+	], get
 )
 
-function getLatest(req, res) {
+function get(req, res) {
 
 	let base = CURRENCY.UYU,
-	{date} = req.params
+		{ date } = req.params
 
 	async.waterfall([
 
 		function getDate(cbGetDate) {
-			if(date === 'latest') {
+			if (date === 'latest') {
 				return CurrencyDay.getLastDate(cbGetDate)
 			}
 
 			return cbGetDate(null, date)
 		},
 
-		function getRatesOfLastDate(lastDate, cbGetRates) {
-			
-			CurrencyDay.getRatesFromDate(lastDate, cbGetRates)
+		function getRates(date, cbGetRates) {
+
+			if (!date) return cbGetRates(new Error(
+				'No data to show'
+			))
+
+			return CurrencyDay.getRatesFromDate(date, cbGetRates)
 		}
-	], function(err, rates) {
-		if(err) return internalError(err, res)
+
+	], function (err, rates) {
+		if (err) return error(err, res)
 
 		let objRates = {}
 
@@ -59,7 +70,7 @@ function getLatest(req, res) {
 }
 
 function getTimestamp(theDate) {
-	return theDate.getTime() / 1000
+	return (theDate && theDate.getTime() / 1000) || null
 }
 
 export default router
