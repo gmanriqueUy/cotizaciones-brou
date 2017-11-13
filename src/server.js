@@ -1,7 +1,6 @@
 import express from 'express'
 import bodyParser from 'body-parser'
 import cookieParser from 'cookie-parser'
-import session from 'express-session'
 import cors from 'cors'
 import errorhandler from 'errorhandler'
 import morgan from 'morgan'
@@ -35,15 +34,6 @@ async function start() {
 
   app.use(methodOverride())
   app.use(express.static(`${__dirname}/public`))
-  
-  app.use(
-    session({
-      secret: 'conduit',
-      cookie: {maxAge: 60000},
-      resave: false,
-      saveUninitialized: false,
-    }),
-  )
   
   if (!isProduction) {
     app.use(errorhandler())
@@ -97,8 +87,14 @@ async function start() {
     const server = app.listen(process.env.PORT || 3000, () => {
       logger.info(`Listening on port ${server.address().port}`)
       server.on('close', () => {
+
+        db.disconnect(() => {
+          logger.info('DB connections ended correctly')
+        })
+
       })
-      resolve(server)
+
+      return resolve(server)
     })
   })
 }

@@ -5,11 +5,12 @@ let _pool = null,
 _connection = null,
 
 db = {
-  connect: connect,
-  connection: getConnection,
-  beginTransaction: beginTransaction,
-  commit: commit,
-  rollback: rollback
+  connect,
+  disconnect,
+  connection,
+  beginTransaction,
+  commit,
+  rollback,
 }
 
 /**
@@ -21,11 +22,17 @@ function connect(cb) {
   cb && cb();
 }
 
+function disconnect(cb) {
+  _connection && _connection.release()
+
+  _pool.end(cb)
+}
+
 /**
  * Returns a connection
  * @returns {Mysql~Connection} The connection
  */
-function getConnection() {
+function connection() {
   return _connection || _pool;
 }
 
