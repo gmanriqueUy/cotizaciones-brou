@@ -14,6 +14,7 @@ beforeAll(() => {
 })
 
 afterAll((done) => {
+	console.log("Closing server");
 	server.close(done)
 })
 
