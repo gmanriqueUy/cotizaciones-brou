@@ -4,14 +4,21 @@ addons:
 cache:
   yarn: true
   directories:
-    - node_modules
+  - node_modules
 notifications:
   email: false
 node_js: '6'
 before_script:
-  - yarn compile
-  - mysql -u root -e "CREATE USER 'cotizacionesBrou'@'localhost' IDENTIFIED BY 'cotizacionesBrou'"
-  - mysql -u root -e "GRANT ALL ON cotizacionesBrou.* TO 'cotizacionesBrou'@'localhost'"
-  - mysql -u root -e "CREATE DATABASE IF NOT EXISTS cotizacionesBrou;"
-  - yarn migrate-up
-  - yarn seed
+- yarn compile
+- mysql -u root -e "CREATE USER 'cotizacionesBrou'@'localhost' IDENTIFIED BY 'cotizacionesBrou'"
+- mysql -u root -e "GRANT ALL ON cotizacionesBrou.* TO 'cotizacionesBrou'@'localhost'"
+- mysql -u root -e "CREATE DATABASE IF NOT EXISTS cotizacionesBrou;"
+- yarn migrate-up
+- yarn seed
+deploy:
+  provider: heroku
+  api_key:
+    secure: iHDM/60GIjg4PtiMTJAZITzsff3u5yL4/JmQktPCVRfkN/OQ4vUhQ2c0ns2XDIu9NZ5/WeTWGLq4XrpLTfSvP9d3nV+FthCn07px2oOxkW9IMrbB1ZfdYVLFzhimYQshBRYPjb3C2xaT1vH2WuoqCvRNy/LaMwj6adegcp2Pk6qUgxzikY5awK6PW8ODvg9W3BdtvrD12fBMlvB41idKp8uqIiUKgABrh3bJcz6gEK+4fcLn6lbR8AgVs8L8v+L1D7iUOoAy/Y7Y4vC6883jm9QhqIBF9pyFStywxl/x39Uw2QUScsXbUxg6RwZ2icV2YZJb9QwPBTsLZDqnUtlWTJSSEkWOEYxkhbpI3cUTyTZUMjtAa3yfoPHJb3PLKsaZo8S+6c7OrOcoTyJA8boDqf4mIn80tZsdoH2Mn+rRVyYQS5mKvmc9QQHjiTzfrcOOEjsEPnXkhjEO6xV6gx43DnrOasK85L6YaE3qtOVSjm6fLIY2wS4j9ZXNf4km09UVobLRoK8P1Vh1c8AsiEpCxQ5kOCBR3IfGt028ZTsJkSP+1xRgFTaOoQY4UsO7B2/hqIOvrb591mqbGAhxwL8KOjHQTptxZYvaYGhuSIRJD/q0pMnYnqSYhRFb+Ve9o8FJNn5J28RI6HbORuJkRH6yHc3TGc/KE8XuPk6qFQ+A9ig=
+  app: cotizaciones-brou
+  on:
+    repo: gmanriqueUy/cotizaciones-brou
