@@ -1,7 +1,7 @@
 {
-  "name": "cotizaciones-bcu",
+  "name": "cotizaciones-brou",
   "version": "0.0.0",
-  "description": "Cotizaciones provistas por el BCU",
+  "description": "Cotizaciones provistas por el Brou",
   "main": "lib/app.js",
   "scripts": {
     "start": "nodemon --debug=5858 --watch ./src --exec babel-node ./src",
@@ -16,14 +16,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/gmanriqueUy/cotizaciones-bcu.git"
+    "url": "git+https://github.com/gmanriqueUy/cotizaciones-brou.git"
   },
   "author": "Gonzalo Manrique",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/gmanriqueUy/cotizaciones-bcu/issues"
+    "url": "https://github.com/gmanriqueUy/cotizaciones-brou/issues"
   },
-  "homepage": "https://github.com/gmanriqueUy/cotizaciones-bcu#readme",
+  "homepage": "https://github.com/gmanriqueUy/cotizaciones-brou#readme",
   "dependencies": {
     "@types/jest": "21.1.5",
     "async": "^2.5.0",
