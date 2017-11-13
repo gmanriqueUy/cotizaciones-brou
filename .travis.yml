@@ -14,3 +14,4 @@ before_script:
   - mysql -u root -e "GRANT ALL ON cotizacionesBrou.* TO 'cotizacionesBrou'@'localhost'"
   - mysql -u root -e "CREATE DATABASE IF NOT EXISTS cotizacionesBrou;"
   - yarn migrate-up
+  - yarn seed
