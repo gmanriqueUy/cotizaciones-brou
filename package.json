@@ -14,7 +14,8 @@
     "seed": "node lib/seed.js",
     "migrate-up": "cd db && node ../node_modules/db-migrate/bin/db-migrate up",
     "migrate-down": "cd db && node ../node_modules/db-migrate/bin/db-migrate down",
-    "migrate-reset": "cd db && node ../node_modules/db-migrate/bin/db-migrate reset"
+    "migrate-reset": "cd db && node ../node_modules/db-migrate/bin/db-migrate reset",
+    "heroku-prestart": "DATABASE_URL=JAWSDB_MARIA_URL npm run migrate-up"
   },
   "repository": {
     "type": "git",
@@ -37,6 +38,8 @@
     "body-parser": "~1.16.0",
     "cookie-parser": "~1.4.3",
     "cors": "2.8.4",
+    "db-migrate": "0.10.0-beta.24",
+    "db-migrate-mysql": "1.1.10",
     "debug": "~2.6.0",
     "errorhandler": "1.5.0",
     "express": "~4.14.1",
@@ -56,8 +59,6 @@
     "chai": "^3.5.0",
     "chai-as-promised": "^6.0.0",
     "cz-conventional-changelog": "^2.0.0",
-    "db-migrate": "^0.10.0-beta.23",
-    "db-migrate-mysql": "^1.1.10",
     "eslint": "4.10.0",
     "eslint-config-airbnb": "^14.1.0",
     "eslint-plugin-import": "^2.2.0",
