@@ -4,7 +4,8 @@
   "description": "Cotizaciones provistas por el Brou",
   "main": "lib/app.js",
   "scripts": {
-    "start": "nodemon --debug=5858 --watch ./src --exec babel-node ./src",
+    "start": "NODE_ENV=production babel-node ./src",
+    "dev": "nodemon --debug=5858 --watch ./src --exec babel-node ./src",
     "test": "jest",
     "test:watch": "jest --watch",
     "compile": "./node_modules/.bin/babel -d lib/ src/",
