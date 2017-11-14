@@ -232,6 +232,8 @@ function downloadFile(cb) {
 
 			return cb(null, Buffer.concat(buffers));
 		});
+	}, (err) => {
+		return cb(err)
 	});
 }
 
