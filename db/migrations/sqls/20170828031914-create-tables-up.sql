@@ -1,5 +1,3 @@
-CREATE DATABASE IF NOT EXISTS `cotizacionesBrou`;
-
 CREATE TABLE `currency` (
   `iso` varchar(3) NOT NULL,
   `name` varchar(64) NOT NULL
