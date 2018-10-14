@@ -100,7 +100,7 @@ Por ejemplo, `GET /currency/2018-10-07` devuelve las cotizaciones del 5 de octub
     }
   }
   ```
-- Resuesta cuando la fecha es inválida:
+- Respuesta cuando la fecha es inválida:
   ```json
   GET /currency/2018-10-32
 
