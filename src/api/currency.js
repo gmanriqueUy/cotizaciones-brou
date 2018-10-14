@@ -38,7 +38,7 @@ function get(req, res) {
     },
 
     function getRates(date, cbGetRates) {
-      if (!date) return cbGetRates(new Error( 'No data to show' ));
+      if (!date) return cbGetRates(new Error('No data to show'));
 
       return CurrencyDay.getRatesFromDate(date, cbGetRates);
     }
