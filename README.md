@@ -36,7 +36,7 @@ Devuelve las cotizaciones más recientes disponibles
 
 - URL: `/currency/latest`
 - Método: `GET`
-- Respuesta de ejemplo:
+- Respuesta exitosa:  
   `GET /currency/latest`
   ```json
   {
@@ -72,9 +72,9 @@ Por ejemplo, `GET /currency/2018-10-07` devuelve las cotizaciones del 5 de octub
 - URL: `/currency/:date`
 - Método: `GET`
 - Params:
-  - `date` (requerido): Fecha con formato `YYYY-MM-DD`.
+  - `date` (requerido): Fecha con formato `YYYY-MM-DD`.  
     Ej: `2018-09-26` para las cotizaciones vigentes al 26 de setiembre del 2018.
-- Respuesta exitosa:
+- Respuesta exitosa:  
   `GET /currency/2018-10-13`
   ```json
   {
@@ -100,10 +100,9 @@ Por ejemplo, `GET /currency/2018-10-07` devuelve las cotizaciones del 5 de octub
     }
   }
   ```
-- Respuesta cuando la fecha es inválida:
+- Respuesta cuando la fecha es inválida:  
+  `GET /currency/2018-10-32`
   ```json
-  GET /currency/2018-10-32
-
   [
     {
       "location": "params",
