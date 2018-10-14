@@ -22,6 +22,10 @@ function connect(cb) {
   cb && cb();
 }
 
+/**
+ * Closes the connection
+ * @param {function} cb Callback called after connection closed
+ */
 function disconnect(cb) {
   _connection && _connection.release()
 
@@ -38,7 +42,7 @@ function connection() {
 
 /**
  * Begins a database transaction
- * 
+ *
  * @param {function} cb - The callback
  */
 function beginTransaction(cb) {
@@ -50,7 +54,7 @@ function beginTransaction(cb) {
 }
 
 /**
- * Commit the changes
+ * Commit the changes of a current transaction
  * @param {function} cb - The callback
  */
 function commit(cb) {
@@ -70,8 +74,8 @@ function commit(cb) {
 }
 
 /**
- * Rollback the changes
- * 
+ * Rollback the changes of a current transaction
+ *
  * @param {function} cb - The callback
  */
 function rollback(cb) {

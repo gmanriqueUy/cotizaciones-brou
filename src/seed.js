@@ -1,4 +1,5 @@
-import fs from 'fs';
+/* eslint-disable no-console */
+
 import http from 'http';
 import xlsx from 'xlsx';
 import async from 'async';
@@ -13,156 +14,155 @@ import CURR from './constants/currencies';
 import FILE_URL from './constants/ine-file-url.js';
 
 const INT_REGEX = /^\d+$/;
-const FLOAT_REGEX = /^\d+([\.\,]\d+)?$/;
-const FILE = './test/cotizaciones.xls';
+const FLOAT_REGEX = /^\d+([.,]\d+)?$/;
 
 moment.locale('es');
 
 function seed() {
 
-	async.waterfall([
+  async.waterfall([
 
-		// Connect to database
-		db.connect,
+    // Connect to database
+    db.connect,
 
-		// Download the file
-		downloadFile,
-		// async.apply(
-		// 	fs.readFile,
-		// 	FILE
-		// ),
+    // Download the file
+    downloadFile,
 
-		function readFileAndGetLastDate(theFile, cbReadFileAndGetLastDate) {
+    function readFileAndGetLastDate(theFile, cbReadFileAndGetLastDate) {
 
-			async.parallel({
-				// Read the file and discard the unuseful lines
-				lines: async.apply(
-					readFile,
-					theFile
-				),
+      async.parallel({
+        // Read the file and discard the unuseful lines
+        lines: async.apply(
+          readFile,
+          theFile
+        ),
 
-				// Get last date existing on DB
-				lastDate: CurrencyDay.getLastDate
-			}, cbReadFileAndGetLastDate);
+        // Get last date existing on DB
+        lastDate: CurrencyDay.getLastDate
+      }, cbReadFileAndGetLastDate);
 
-		},
+    },
 
-		// Parse the array of lines and transform it to an
-		// array of days
-		makeArrayOfDays,
+    // Parse the array of lines and transform it to an
+    // array of days
+    makeArrayOfDays,
 
-		// Save the currencies into the database
-		CurrencyDay.insertDays
+    // Save the currencies into the database
+    CurrencyDay.insertDays
 
-	], (err, inserted) => {
-		if (err) {
-			throw err;
-		}
+  ], (err, inserted) => {
+    if (err) {
+      throw err;
+    }
 
-		console.log(`Seeded with ${inserted} rows. :)`);
-		return process.exit();
-	});
+    console.log(`Seeded with ${inserted} rows. :)`);
+    return process.exit();
+  });
 }
 
 /**
- * 
+ *
  * @param {Array} lines - Array of useful lines
  * @param {function(Error, Array)} cb - The callback
  */
 function makeArrayOfDays(data, cb) {
 
-	let {
-		lastDate,
-		lines
-	} = data,
-		year,
-		month,
-		day,
-		date,
-		days = [];
+  let {
+    lastDate,
+    lines
+  } = data,
+    year,
+    month,
+    day,
+    date,
+    days = [];
 
-	for (let i = 0, line; i < lines.length; i++) {
-		
-		line = lines[i];
-		day = line[COL.DAY];
-		month = line[COL.MONTH] || month;
-		year = line[COL.YEAR] || year;
-		date = getDate(day, month, year);
+  for (let i = 0, line; i < lines.length; i++) {
 
-		if (date.isSameOrBefore(lastDate)) continue;
+    line = lines[i];
+    day = line[COL.DAY];
+    month = line[COL.MONTH] || month;
+    year = line[COL.YEAR] || year;
+    date = getDate(day, month, year);
 
-		days.push({
-			date: date.toDate(),
-			currencies: [
-				{
-					iso: CURR.USD,
-					buy: getValue(line[COL.USD_BUY]),
-					sell: getValue(line[COL.USD_SELL])
-				},
-				{
-					iso: CURR.ARS,
-					buy: getValue(line[COL.ARS_BUY]),
-					sell: getValue(line[COL.ARS_SELL])
-				},
-				{
-					iso: CURR.BRL,
-					buy: getValue(line[COL.BRL_BUY]),
-					sell: getValue(line[COL.BRL_SELL])
-				},
-				{
-					iso: CURR.EUR,
-					buy: getValue(line[COL.EUR_BUY]),
-					sell: getValue(line[COL.EUR_SELL])
-				}
-			]
-		});
-	}
+    if (date.isSameOrBefore(lastDate)) continue;
 
-	return cb(null, days);
+    days.push({
+      date: date.toDate(),
+      currencies: [
+        {
+          iso: CURR.USD,
+          buy: getValue(line[COL.USD_BUY]),
+          sell: getValue(line[COL.USD_SELL])
+        },
+        {
+          iso: CURR.ARS,
+          buy: getValue(line[COL.ARS_BUY]),
+          sell: getValue(line[COL.ARS_SELL])
+        },
+        {
+          iso: CURR.BRL,
+          buy: getValue(line[COL.BRL_BUY]),
+          sell: getValue(line[COL.BRL_SELL])
+        },
+        {
+          iso: CURR.EUR,
+          buy: getValue(line[COL.EUR_BUY]),
+          sell: getValue(line[COL.EUR_SELL])
+        }
+      ]
+    });
+  }
+
+  return cb(null, days);
 }
 
+/**
+ * Returns the value if it's a valid float or null otherwise
+ * @param {string} value Value expected to be a float
+ */
 function getValue(value) {
-	return FLOAT_REGEX.test(value) ? value : null;
+  return FLOAT_REGEX.test(value) ? value : null;
 }
 
 /**
  * Get a moment instance by parsing
  * day, month, and year
- * 
+ *
  * @param {number} day
  * @param {string} month
  * @param {number} year
  */
 function getDate(day, month, year) {
 
-	let date = `${day}-${purgeMonth(month)}.-${year}`;
+  let date = `${day}-${purgeMonth(month)}.-${year}`;
 
-	return moment(date, 'D-MMM-YYYY');
+  return moment(date, 'D-MMM-YYYY');
 }
 
 /**
  * Remove trailing spaces and lowerizes the month
  * Also standarize the 'code'
- * (e.g. 'set', 'sep' and 'septiembre' is returned as 'sep') 
+ * (e.g. 'set', 'sep' and 'septiembre' is returned as 'sep')
  * @param {string} month String found in the month column of the file
  */
 function purgeMonth(month) {
-	month = month.toLowerCase().trim();
+  month = month.toLowerCase().trim();
 
-	switch (month) {
-		case 'set':
-		case 'setiembre':
-		case 'septiembre':
-			month = 'sep';
-			break;
+  switch (month) {
+    case 'set':
+    case 'setiembre':
+    case 'septiembre':
+      month = 'sep';
+      break;
 
-		
-		case 'agosto':
-			month = 'ago';
-			break;
-	}
 
-	return month;
+    case 'agosto':
+      month = 'ago';
+      break;
+  }
+
+  return month;
 }
 
 /**
@@ -173,68 +173,68 @@ function purgeMonth(month) {
  */
 function readFile(file, cb) {
 
-	console.log("\nReading file...");
+  console.log("\nReading file...");
 
-	/*
-	 * Opens the file and get array of arrays
-	 */
-	const book = xlsx.read(file, { type: 'buffer' }),
-		sheet = book.Sheets[book.SheetNames[0]],
-		lines = xlsx.utils.sheet_to_json(sheet, {
-			header: 1,
-			range: 7
-		});
+  /*
+   * Opens the file and get array of arrays
+   */
+  const book = xlsx.read(file, { type: 'buffer' }),
+    sheet = book.Sheets[book.SheetNames[0]],
+    lines = xlsx.utils.sheet_to_json(sheet, {
+      header: 1,
+      range: 7
+    });
 
-	let usefulLines = [];
+  let usefulLines = [];
 
-	lines.forEach((line) => {
-		if (INT_REGEX.test(line[0])) {
-			usefulLines.push(line);
-		}
-	});
+  lines.forEach((line) => {
+    if (INT_REGEX.test(line[0])) {
+      usefulLines.push(line);
+    }
+  });
 
-	console.log(`Found ${usefulLines.length} useful lines`);
+  console.log(`Found ${usefulLines.length} useful lines`);
 
-	return cb(null, usefulLines);
+  return cb(null, usefulLines);
 }
 
 /**
  * Download the INE file
- * 
- * @param {function(Error,Buffer)} cb 
+ *
+ * @param {function(Error,Buffer)} cb
  */
 function downloadFile(cb) {
-	let buffers = [],
-	fileSize = 0;
+  let buffers = [],
+  fileSize = 0;
 
-	http.get(FILE_URL, (response) => {
+  http.get(FILE_URL, (response) => {
 
-		console.log("Downloading file...");
+    console.log("Downloading file...");
 
-		let progressInterval = setInterval(() => {
-			console.log(fileSize + " bytes");
-		}, 500);
-		
-		response.on('data', (chunk) => {
-			buffers.push(chunk);
-			fileSize += chunk.byteLength;
-		});
-		
-		response.on('error', (err) => {
-			return cb(err);
-		});
-		
-		response.on('end', () => {
-			console.log(fileSize + " bytes");
-			console.log("File downloaded");
+    let progressInterval = setInterval(() => {
+      console.log(fileSize + " bytes");
+    }, 500);
 
-			clearInterval(progressInterval);
+    response.on('data', (chunk) => {
+      buffers.push(chunk);
+      fileSize += chunk.byteLength;
+    });
 
-			return cb(null, Buffer.concat(buffers));
-		});
-	}, (err) => {
-		return cb(err)
-	});
+    response.on('error', (err) => {
+      return cb(err);
+    });
+
+    response.on('end', () => {
+      console.log(fileSize + " bytes");
+      console.log("File downloaded");
+
+      clearInterval(progressInterval);
+
+      return cb(null, Buffer.concat(buffers));
+    });
+  }, (err) => {
+    return cb(err)
+  });
 }
 
 seed();

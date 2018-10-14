@@ -1,76 +1,73 @@
-import express from 'express'
-import async from 'async'
-import { param } from 'express-validator/check'
+import express from 'express';
+import async from 'async';
+import { param } from 'express-validator/check';
 
-import error from '../helpers/error'
+import error from '../helpers/error';
 
-import checkErrors from '../helpers/check-errors'
+import checkErrors from '../helpers/check-errors';
 
-import CurrencyDay from '../models/currency-day'
+import CurrencyDay from '../models/currency-day';
 
-import CURRENCY from '../constants/currencies'
+import CURRENCY from '../constants/currencies';
 
-const router = express.Router()
+const router = express.Router();
 
 router.get(
-	'/:date', [
-		param('date', "Date must be with YYYY-MM-DD format or 'latest'")
-			.custom((date) => {
-				return (!isNaN(Date.parse(date)) || date === 'latest')
-			}),
-
-		checkErrors
-	], get
-)
+  '/:date', [
+    param('date', "Date must be with YYYY-MM-DD format or 'latest'")
+      .custom((date) => {
+        return (!isNaN(Date.parse(date)) || date === 'latest')
+      }),
+    checkErrors
+  ], get
+);
 
 function get(req, res) {
 
-	let base = CURRENCY.UYU,
-		{ date } = req.params
+  const { date } = req.params;
+  const base = CURRENCY.UYU;
 
-	async.waterfall([
+  async.waterfall([
 
-		function getDate(cbGetDate) {
-			if (date === 'latest') {
-				return CurrencyDay.getLastDate(cbGetDate)
-			}
+    function getDate(cbGetDate) {
+      if (date === 'latest') {
+        return CurrencyDay.getLastDate(cbGetDate);
+      }
 
-			return cbGetDate(null, date)
-		},
+      return cbGetDate(null, date);
+    },
 
-		function getRates(date, cbGetRates) {
+    function getRates(date, cbGetRates) {
+      if (!date) return cbGetRates(new Error( 'No data to show' ));
 
-			if (!date) return cbGetRates(new Error(
-				'No data to show'
-			))
+      return CurrencyDay.getRatesFromDate(date, cbGetRates);
+    }
 
-			return CurrencyDay.getRatesFromDate(date, cbGetRates)
-		}
+  ], function (err, rates) {
+    if (err) return error(err, res);
 
-	], function (err, rates) {
-		if (err) return error(err, res)
+    let objRates = {};
+    let date;
 
-		let objRates = {}
+    rates.forEach((currency) => {
+      date = currency.date;
 
-		rates.forEach((currency) => {
-			date = currency.date
+      objRates[currency.iso] = {
+        sell: currency.sell,
+        buy: currency.buy
+      };
+    });
 
-			objRates[currency.iso] = {
-				sell: currency.sell,
-				buy: currency.buy
-			}
-		})
-
-		return res.json({
-			base,
-			timestamp: getTimestamp(date),
-			rates: objRates
-		})
-	})
+    return res.json({
+      base,
+      timestamp: getTimestamp(date),
+      rates: objRates
+    });
+  });
 }
 
 function getTimestamp(theDate) {
-	return (theDate && theDate.getTime() / 1000) || null
+  return (theDate && theDate.getTime() / 1000) || null;
 }
 
-export default router
+export default router;
