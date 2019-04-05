@@ -65,19 +65,12 @@ function seed() {
  * @param {Array} lines - Array of useful lines
  * @param {function(Error, Array)} cb - The callback
  */
-function makeArrayOfDays(data, cb) {
+function makeArrayOfDays({ lastDate, lines }, cb) {
 
-  let {
-    lastDate,
-    lines
-  } = data,
-    year,
-    month,
-    day,
-    date,
-    days = [];
+  const days = {};
+  let year, month, day, date, line;
 
-  for (let i = 0, line; i < lines.length; i++) {
+  for (let i = 0; i < lines.length; i++) {
 
     line = lines[i];
     day = line[COL.DAY];
@@ -87,7 +80,7 @@ function makeArrayOfDays(data, cb) {
 
     if (date.isSameOrBefore(lastDate)) continue;
 
-    days.push({
+    days[date.format('L')] = ({
       date: date.toDate(),
       currencies: [
         {
@@ -135,9 +128,9 @@ function getValue(value) {
  */
 function getDate(day, month, year) {
 
-  let date = `${day}-${purgeMonth(month)}.-${year}`;
+  const date = `${day}-${purgeMonth(month)}.-${year}`;
 
-  return moment(date, 'D-MMM-YYYY');
+  return moment.utc(date, 'D-MMM-YYYY');
 }
 
 /**
@@ -185,7 +178,7 @@ function readFile(file, cb) {
       range: 7
     });
 
-  let usefulLines = [];
+  const usefulLines = [];
 
   lines.forEach((line) => {
     if (INT_REGEX.test(line[0])) {
@@ -204,14 +197,14 @@ function readFile(file, cb) {
  * @param {function(Error,Buffer)} cb
  */
 function downloadFile(cb) {
-  let buffers = [],
-  fileSize = 0;
+  const buffers = [];
+  let fileSize = 0;
 
   http.get(FILE_URL, (response) => {
 
     console.log("Downloading file...");
 
-    let progressInterval = setInterval(() => {
+    const progressInterval = setInterval(() => {
       console.log(fileSize + " bytes");
     }, 500);
 

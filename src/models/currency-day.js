@@ -53,13 +53,15 @@ function getLastDate(cb) {
  * @param {function} cb The callback
  */
 function insertDays(days, cb) {
-  let inserts = [];
+  const inserts = [];
+  const daysKeys = Object.keys(days);
 
-  if(!days || days.length === 0) {
+  if(!daysKeys || daysKeys.length === 0) {
     return cb(null, 0);
   }
 
-  days.forEach(day => {
+  daysKeys.forEach(date => {
+    const day = days[date];
     day.currencies.forEach(currency => {
       inserts.push([
         currency.iso,
