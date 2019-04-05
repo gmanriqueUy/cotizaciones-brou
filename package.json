@@ -16,7 +16,8 @@
     "migrate-up": "cd db && node ../node_modules/db-migrate/bin/db-migrate up",
     "migrate-down": "cd db && node ../node_modules/db-migrate/bin/db-migrate down",
     "migrate-reset": "cd db && node ../node_modules/db-migrate/bin/db-migrate reset",
-    "heroku-postbuild": "DATABASE_URL=$JAWSDB_MARIA_URL npm run migrate-up && npm run seed"
+    "heroku-postbuild": "DATABASE_URL=$JAWSDB_MARIA_URL npm run migrate-up && npm run seed",
+    "heroku-reseed": "DATABASE_URL=$JAWSDB_MARIA_URL npm run migrate-reset && npm run heroku-postbuild"
   },
   "repository": {
     "type": "git",
