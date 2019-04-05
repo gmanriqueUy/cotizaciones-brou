@@ -49,7 +49,7 @@
     "loglevel": "1.5.1",
     "method-override": "2.3.10",
     "moment": "^2.18.1",
-    "morgan": "~1.7.0",
+    "morgan": ">=1.9.1",
     "mysql": "^2.14.1",
     "pug": "^2.0.0-beta11",
     "xlsx": "^0.11.3"
