@@ -9,8 +9,9 @@ notifications:
 node_js: '14'
 before_script:
 - npm run compile
-- mysql -u root -e "GRANT ALL PRIVILEGES ON cotizacionesBrou.* TO cotizacionesBrou@localhost IDENTIFIED BY 'cotizacionesBrou'"
-- mysql -u root -e "CREATE DATABASE IF NOT EXISTS cotizacionesBrou;"
+- sudo mysql -e "CREATE USER 'cotizacionesBrou'@'localhost' IDENTIFIED BY 'cotizacionesBrou';"
+- sudo mysql -e "GRANT ALL ON cotizacionesBrou.* TO 'cotizacionesBrou'@'localhost';"
+- sudo mysql -e "CREATE DATABASE IF NOT EXISTS cotizacionesBrou;"
 - npm run migrate-up
 - npm run seed
 - npm run test
