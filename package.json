@@ -9,9 +9,9 @@
     "dev": "nodemon --inspect=5858 --watch ./src --exec babel-node ./src",
     "test": "jest",
     "test:watch": "jest --watch",
-    "compile": "./node_modules/.bin/babel -d lib/ src/",
+    "compile": "babel -q -d lib/ src/",
     "preseed": "npm run compile",
-    "seed": "node lib/seed.js",
+    "seed": "NODE_EXTRA_CA_CERTS=certs/intermediate.pem node lib/seed.js",
     "seed-debug": "node --inspect --inspect-brk lib/seed.js",
     "migrate-up": "cd db && node ../node_modules/db-migrate/bin/db-migrate up",
     "migrate-down": "cd db && node ../node_modules/db-migrate/bin/db-migrate down",
@@ -67,7 +67,8 @@
     "eslint-plugin-jest": "21.2.0",
     "eslint-plugin-jsx-a11y": "^4.0.0",
     "eslint-plugin-react": "^6.10.0",
-    "jest": "21.2.1"
+    "jest": "21.2.1",
+    "nodemon": "^2.0.6"
   },
   "config": {
     "commitizen": {

@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 
-import http from 'http';
+import https from 'https';
 import xlsx from 'xlsx';
 import async from 'async';
 import moment from 'moment';
@@ -52,7 +52,8 @@ function seed() {
 
   ], (err, inserted) => {
     if (err) {
-      throw err;
+      console.log(err);
+      return process.exit(1);
     }
 
     console.log(`Seeded with ${inserted} rows. :)`);
@@ -115,7 +116,7 @@ function makeArrayOfDays({ lastDate, lines }, cb) {
  * @param {string} value Value expected to be a float
  */
 function getValue(value) {
-  return FLOAT_REGEX.test(value) ? value : null;
+  return FLOAT_REGEX.test(value) ? value.replace(',','.') : null;
 }
 
 /**
@@ -200,7 +201,7 @@ function downloadFile(cb) {
   const buffers = [];
   let fileSize = 0;
 
-  http.get(FILE_URL, (response) => {
+  https.get(FILE_URL, (response) => {
 
     console.log("Downloading file...");
 

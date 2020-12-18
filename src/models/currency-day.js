@@ -3,7 +3,7 @@ import db from "../config/db-connection";
 const CurrencyDay = {
   getLastDate,
   getRatesFromDate,
-  insertDays
+  insertDays,
 };
 
 /**
@@ -21,7 +21,7 @@ function getRatesFromDate(date, cb) {
     )`,
     date,
     (err, rates) => {
-      if(err) return cb(err);
+      if (err) return cb(err);
 
       return cb(null, rates);
     }
@@ -35,11 +35,12 @@ function getLastDate(cb) {
   db.connection().query(
     `SELECT MAX(date) lastDate
     FROM currencyDay
-    `, (err, results) => {
-      if(err) return cb(err);
+    `,
+    (err, results) => {
+      if (err) return cb(err);
 
-      if(results.length !== 1) {
-        return cb(new Error('Forgot how to do max!'));
+      if (results.length !== 1) {
+        return cb(new Error("Forgot how to do max!"));
       }
 
       return cb(null, results[0].lastDate);
@@ -56,36 +57,48 @@ function insertDays(days, cb) {
   const inserts = [];
   const daysKeys = Object.keys(days);
 
-  if(!daysKeys || daysKeys.length === 0) {
+  if (!daysKeys || daysKeys.length === 0) {
     return cb(null, 0);
   }
 
-  daysKeys.forEach(date => {
+  daysKeys.forEach((date) => {
     const day = days[date];
-    day.currencies.forEach(currency => {
-      inserts.push([
-        currency.iso,
-        day.date,
-        currency.buy,
-        currency.sell
-      ]);
+    day.currencies.forEach((currency) => {
+      inserts.push([currency.iso, day.date, currency.buy, currency.sell]);
     });
   });
 
-  db.connection().query(
-    `INSERT INTO currencyDay(
+  const doInserts = (inserts, cb) => {
+    db.connection().query(
+      `INSERT INTO currencyDay(
       iso,
       date,
       buy,
       sell
-    ) VALUES ?`, [
-      inserts
-    ], (err, result) => {
-      if(err) return cb(err);
+    ) VALUES ?`,
+      [inserts],
+      (err, result) => {
+        if (err) return cb(err);
 
-      return cb(null, result.affectedRows);
+        return cb(null, result.affectedRows);
+      }
+    );
+  };
+
+  let totalInsertedRows = 0;
+  doInserts(inserts.splice(0, 200), function doInsertsCb(err, insertedRows) {
+    if (err) {
+      return cb(err);
     }
-  );
+
+    totalInsertedRows += insertedRows;
+
+    if (inserts.length) {
+      doInserts(inserts.splice(0, 200), doInsertsCb);
+    } else {
+      cb(null, totalInsertedRows);
+    }
+  });
 }
 
 export default CurrencyDay;
