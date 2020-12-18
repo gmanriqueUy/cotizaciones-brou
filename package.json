@@ -3,6 +3,9 @@
   "version": "0.0.0",
   "description": "Cotizaciones provistas por el Brou",
   "main": "lib/app.js",
+  "engines": {
+    "node": ">=14"
+  },
   "scripts": {
     "prestart": "npm run compile",
     "start": "NODE_ENV=production node lib/",
