@@ -1,23 +1,22 @@
 language: node_js
 addons:
-  mariadb: '10.1'
+  mariadb: '10.5'
 cache:
-  yarn: true
   directories:
   - node_modules
 notifications:
   email: false
-node_js: '6'
+node_js: '14'
 before_script:
-- yarn compile
-- mysql -u root -e "CREATE USER 'cotizacionesBrou'@'localhost' IDENTIFIED BY 'cotizacionesBrou'"
-- mysql -u root -e "GRANT ALL ON cotizacionesBrou.* TO 'cotizacionesBrou'@'localhost'"
+- npm run compile
+- mysql -u root -e "GRANT ALL PRIVILEGES ON cotizacionesBrou.* TO cotizacionesBrou@localhost IDENTIFIED BY 'cotizacionesBrou'"
 - mysql -u root -e "CREATE DATABASE IF NOT EXISTS cotizacionesBrou;"
-- yarn migrate-up
-- yarn seed
-- yarn test
+- npm run migrate-up
+- npm run seed
+- npm run test
 deploy:
   provider: heroku
   api_key:
-    secure: V0QpJydA0WpDFbroVN/WG1YuqbT1I9/zmxRI8fngYfDWQPZbUP/kITq9NGAAb83BiYKuGtTYq/1VH05Cy+s8GNRIJQcwFsNb5WKydO8mnvS+rL8Url5bAzIfkgpekbCNr+tTtfn6RjNrwp+6wi5Zmm402QdCafRxiKROTo9N9wwSLcm/J+oTesz0kXu3nl0Bxj8cq4V6hFVSes9GLqJ9RP5LFHYTEwcEE/eLlj7/6NibYe/XmByrUaj7KZ+9EUstzFZbQ59xip2Jh66JOBmLelvLAkmDjuQvzk1Agwq2+Q0W8w6NzKajGbXiBigWdrXrYJVZBOG3pZmQZ1euOShsztyML2NM+cn7RDpce0wPXLJfkGr8q2IGqt7a351ZUdFrkKGrCWrY36AaW4tBv9/kBi8i9LgKMFjEX5ji3JB6vXtjmuqwP2KUJM52CpoZMzry1R8TLhvhz1kXIXhDC/qUrdbBgbkp+d986hAUxkCXNvCu+5+FOoKcPc+clViUVpvjeMLorxfL9LzglmTRZKEm4UxOCSADyI1YqSFzkYAcg9v35iQV3iWnk+SHRBbzlSOvu6e4hZzNBbMifQEVocTBl4hCw1MVh5Bsy9M232GplBqKsIwmkCDh3j5F56EyNTdVtJPCeyH5YXgMh/NKn4s/vy4rX8y7O9RPICYAN2Jj0pk=
+    # This is ok, it's encrypted ;)
+    secure: P/qv3qye2QOcDgo/uvo+mY5vmeFN4dcqbd3pL9pEXD7z3RwdE3uW+gcchI9Fj3KXr2QTWqNS79gO0pwF2hN/cRB1NBC0jNbH0I4WIHOeD/UCH7nDahJvd8dBuTYfGCtuX9OZi9ybHymeZeetV/TU8Tyuq0rbzdaP3BU37k0CScZ+/T+Y2wUzrcS13lobJGgIf+L2eLOkq5cmUcJHtZXl0YaocksyEPm3CTb0WikzGM9LxJlrlqmmGnqMICpZ/gSFjFBVyeRKpJ+mn9Qg1QJglBavetsWdVQ67/9OFlsMbUvmkAHYS1o6BBhoLgF3GZ5+GyNNldoHzr2zENqZjWrxhEKUF9ox5BoIq+UPzBT0c+QZqIwbSa9NXa65EC9a0IGi80C9VYBv4GtFaR+TdO9/4TwyUsntNXL5Rl1GbaxMPMsgFt4OS7YY83eoUK6AKV+AkCS29c6q8iWbXXs2EB2zRhobp1oL07xIfBZvvbq/pGtWey4AT37iGx3B3juY5aaVND6u0+O0bqHxNW1nV44Y5YmsrjaUN8aERel0JNFvRiTxCc1eqclW9CfYGacfU61Gs2XsnCzF2UEsMTEWiLUVrBxvTdb0jw8GpBCPxVqVsMmwapVGk6pB2/sLwa0S4gMFfpMHGcQ70fdmMe0O1ZnqGB72hv6sapSZlMfQOil+LLg=
   app: cotizaciones-brou
