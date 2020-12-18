@@ -42,7 +42,7 @@
     "body-parser": "^1.19.0",
     "cookie-parser": "~1.4.3",
     "cors": "2.8.4",
-    "db-migrate": "0.10.0-beta.24",
+    "db-migrate": "^0.11.11",
     "db-migrate-mysql": "1.1.10",
     "debug": "~2.6.0",
     "errorhandler": "1.5.0",
