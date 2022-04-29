@@ -33,7 +33,7 @@
   },
   "homepage": "https://github.com/gmanriqueUy/cotizaciones-brou#readme",
   "dependencies": {
-    "async": "^2.5.0",
+    "async": "^2.6.4",
     "babel-cli": "^6.26.0",
     "babel-core": "6.26.0",
     "babel-polyfill": "^6.23.0",
