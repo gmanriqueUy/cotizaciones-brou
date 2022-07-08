@@ -51,7 +51,7 @@
     "express-validator": "4.3.0",
     "loglevel": "1.5.1",
     "method-override": "2.3.10",
-    "moment": "^2.18.1",
+    "moment": "^2.29.4",
     "morgan": ">=1.9.1",
     "mysql": "^2.14.1",
     "pug": "^3.0.1",
