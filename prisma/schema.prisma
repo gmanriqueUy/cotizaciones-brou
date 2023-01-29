@@ -1,0 +1,23 @@
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Currency {
+  iso          String @id
+  name         String
+  dates CurrencyDate[]
+}
+
+model CurrencyDate {
+  @@id([iso, date])
+  iso  String
+  date DateTime
+  buy  Float
+  sell Float
+  currency Currency @relation(fields: [iso], references: [iso], onDelete: Restrict)
+}
