@@ -1,6 +1,7 @@
 import type { CurrencyDate } from "@prisma/client";
 import { isBefore, isEqual, isValid, parse } from "date-fns";
 import { es } from "date-fns/locale";
+import invariant from "tiny-invariant";
 import type { SourceLine } from "./parseXLSX";
 
 const CURRENCY_ISOS = ["USD", "ARS", "BRL", "EUR"] as const;
@@ -29,7 +30,7 @@ const COLUMN = {
 
 const FLOAT_REGEX = /^\d+([.,]\d+)?$/;
 
-function sanitizeMonth(month: string | undefined) {
+function sanitizeMonth(month: string) {
   if (!month) return "not found";
 
   let sanitizedMonth = month.toLocaleLowerCase().trim();
@@ -52,11 +53,7 @@ function getMonthToken(month: string) {
   return month.length === 3 ? "MMM" : "MMMM";
 }
 
-function getDate(
-  day: string | undefined,
-  month: string | undefined,
-  year: string | undefined
-) {
+function getDate(day: number, month: string, year: number) {
   const sanitizedMonth = sanitizeMonth(month);
   const dateString = `${day} ${sanitizedMonth} ${year}`;
   return parse(
@@ -67,7 +64,7 @@ function getDate(
   );
 }
 
-function getValue(value: string | undefined) {
+function getValue(value: string | number | undefined) {
   if (typeof value === "number") return value;
 
   return value && typeof value === "string" && FLOAT_REGEX.test(value)
@@ -78,14 +75,19 @@ function getValue(value: string | undefined) {
 export function processLines(lines: SourceLine[], lastDate: Date) {
   const currencyDates = new Map<string, CurrencyDate>();
 
-  let month: string | undefined;
-  let year: string | undefined;
+  let month: SourceLine[number];
+  let year: SourceLine[number];
 
   for (let index = 0; index < lines.length; index++) {
     const line = lines[index];
     const day = line[COLUMN.DAY];
     month = line[COLUMN.MONTH] || month;
     year = line[COLUMN.YEAR] || year;
+
+    invariant(typeof day === "number", "Day must be a number");
+    invariant(typeof month === "string", "Month must be a string");
+    invariant(typeof year === "number", "Year must be a number");
+
     const date = getDate(day, month, year);
 
     if (!isValid(date)) {

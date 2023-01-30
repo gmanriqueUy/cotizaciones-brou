@@ -1,8 +1,6 @@
 import * as XLSX from "xlsx";
 
-const INT_REGEX = /^\d+$/;
-
-export type SourceLine = (string | undefined)[];
+export type SourceLine = (string | number | undefined)[];
 
 export function parseXLSX(file: ArrayBuffer) {
   const book = XLSX.read(file, { type: "buffer" });
@@ -13,7 +11,8 @@ export function parseXLSX(file: ArrayBuffer) {
   });
 
   const linesWithData = lines.filter(
-    (line) => line[0] && INT_REGEX.test(line[0])
+    (line) =>
+      line[0] && (typeof line[0] === "number" || Number.isFinite(line[0]))
   );
 
   return linesWithData;

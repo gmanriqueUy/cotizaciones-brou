@@ -1,0 +1,30 @@
+// Vitest Snapshot v1
+
+exports[`processLines > should process a single line 1`] = `
+[
+  {
+    "buy": 38.7,
+    "date": 2023-01-02T03:00:00.000Z,
+    "iso": "USD",
+    "sell": 41.2,
+  },
+  {
+    "buy": 0.05,
+    "date": 2023-01-02T03:00:00.000Z,
+    "iso": "ARS",
+    "sell": 0.35,
+  },
+  {
+    "buy": 7.17,
+    "date": 2023-01-02T03:00:00.000Z,
+    "iso": "BRL",
+    "sell": 9.17,
+  },
+  {
+    "buy": 40.41,
+    "date": 2023-01-02T03:00:00.000Z,
+    "iso": "EUR",
+    "sell": 45.36,
+  },
+]
+`;
