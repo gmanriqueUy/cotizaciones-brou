@@ -7,4 +7,6 @@
 
 set -ex
 npx prisma migrate deploy
+npm run seed
+supercronic -split-logs seed.crontab 1>./stdout.log &
 npm run start

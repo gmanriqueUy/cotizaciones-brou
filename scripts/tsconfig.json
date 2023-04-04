@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "display": "Node LTS",
+  "compilerOptions": {
+    "lib": ["ESNext"],
+    "module": "commonjs",
+    "target": "ESNext",
+    "strict": true,
+    "esModuleInterop": true,
+    "outDir": "./build",
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "moduleResolution": "node",
+    "rootDir": "./"
+  }
+}

@@ -1,6 +1,7 @@
 node_modules
 
 /build
+/scripts/build
 /public/build
 .env
 
