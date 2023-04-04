@@ -4,6 +4,7 @@ import { getLastExistingDate } from "./getLastExistingDate";
 import { parseXLSX } from "./parseXLSX";
 import { processLines } from "./processLines";
 
+const INSERT_SIZE = 1000;
 const prisma = new PrismaClient();
 
 async function seed() {
@@ -23,11 +24,17 @@ async function seed() {
 
   console.log("About to insert %s new records", newRecords.length);
 
-  await prisma.$transaction(
-    newRecords.map((data) => prisma.currencyDate.create({ data }))
-  );
+  let insertedCount = 0;
+  do {
+    const chunk = newRecords.splice(0, INSERT_SIZE);
+    await prisma.$transaction(
+      chunk.map((data) => prisma.currencyDate.create({ data }))
+    );
+    insertedCount += chunk.length;
+    console.log("%s records inserted", insertedCount);
+  } while (newRecords.length);
 
-  console.log("New records successfully inserted into the database.");
+  console.log("All records successfully inserted into the database.");
 }
 
 seed()
