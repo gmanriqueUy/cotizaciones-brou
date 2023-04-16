@@ -27,7 +27,7 @@ export async function loader({ params }: LoaderArgs) {
   const date = params.date === "latest" ? new Date() : new Date(params.date);
 
   if (!isValid(date)) {
-    throw new Response("Invalid date", { status: 401 });
+    throw new Response("Invalid date", { status: 400 });
   }
 
   const currencyDates = await getAllCurrenciesByDate(date);
