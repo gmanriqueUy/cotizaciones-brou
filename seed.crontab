@@ -1,1 +1,1 @@
-* 5 * * * npm run seed
+0 5 * * * npm run seed
