@@ -4,6 +4,7 @@ import invariant from "tiny-invariant";
 import { format, isValid } from "date-fns";
 import { getAllCurrenciesByDate } from "~/models/currency.server";
 import type { Currency, CurrencyDate } from "@prisma/client";
+import { cors } from "remix-utils";
 
 type Rates = Record<Currency["iso"], Pick<CurrencyDate, "buy" | "sell">>;
 
@@ -21,7 +22,7 @@ function toRates(currencyDates: CurrencyDate[]): Rates {
   }, {});
 }
 
-export async function loader({ params }: LoaderArgs) {
+export async function loader({ params, request }: LoaderArgs) {
   invariant(params.date, "date not found");
 
   const date = params.date === "latest" ? new Date() : new Date(params.date);
@@ -36,10 +37,14 @@ export async function loader({ params }: LoaderArgs) {
     throw new Response("No data found for the date provided", { status: 404 });
   }
 
-  return json<CurrenciesResponse>({
-    base: "UYU", // TODO - Remove hard-coded value
-    timestamp: currencyDates[0].date.getTime(),
-    dateISOString: format(currencyDates[0].date, "yyyy-MM-dd"),
-    rates: toRates(currencyDates),
-  });
+  return cors(
+    request,
+    json<CurrenciesResponse>({
+      base: "UYU", // TODO - Remove hard-coded value
+      timestamp: currencyDates[0].date.getTime(),
+      dateISOString: format(currencyDates[0].date, "yyyy-MM-dd"),
+      rates: toRates(currencyDates),
+    }),
+    { methods: ["GET"] }
+  );
 }
