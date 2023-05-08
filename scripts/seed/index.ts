@@ -4,7 +4,7 @@ import { getLastExistingDate } from "./getLastExistingDate";
 import { parseXLSX } from "./parseXLSX";
 import { processLines } from "./processLines";
 
-const INSERT_SIZE = 1000;
+const INSERT_SIZE = 200;
 const prisma = new PrismaClient();
 
 async function seed() {
