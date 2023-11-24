@@ -26,3 +26,15 @@ export async function getAllCurrenciesByDate(date: Date) {
     },
   });
 }
+
+export async function getAllByCurrency(currency: string[] | undefined) {
+  return prisma.currencyDate.findMany(
+    currency
+      ? {
+          where: {
+            iso: { in: currency },
+          },
+        }
+      : undefined
+  );
+}
