@@ -67,6 +67,7 @@ COPY --from=build /myapp/node_modules/.prisma /myapp/node_modules/.prisma
 
 COPY --from=build /myapp/build /myapp/build
 COPY --from=build /myapp/scripts/build /myapp/scripts/build
+COPY --from=build /myapp/scripts/seed/fallback.xlsx /myapp/scripts/build/seed/fallback.xlsx
 COPY --from=build /myapp/public /myapp/public
 COPY --from=build /myapp/package.json /myapp/package.json
 COPY --from=build /myapp/start.sh /myapp/start.sh
