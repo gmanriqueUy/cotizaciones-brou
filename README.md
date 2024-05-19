@@ -19,9 +19,9 @@ _Dato curioso: La cotización más antigua accesible a traves de esta API es del
 
 ## Los datos
 
-Los datos son obtenidos desde el [Histórico de Cotizaciones](http://www.ine.gub.uy/web/guest/cotizacion-de-monedas) del **Instituto Nacional de Estadística del Uruguay**.
+Los datos son obtenidos desde el [Histórico de Cotizaciones](https://www.gub.uy/instituto-nacional-estadistica/datos-y-estadisticas/estadisticas/series-historicas-cotizacion%20monedas) del **Instituto Nacional de Estadística del Uruguay**.
 
-Particularmente, la base de datos de genera a partir de [este archivo XLS ](https://www5.ine.gub.uy/documents/Estad%C3%ADsticasecon%C3%B3micas/SERIES%20Y%20OTROS/Cotizaci%C3%B3n%20de%20monedas/Cotizaci%C3%B3n%20monedas.xlsx).
+Particularmente, la base de datos de genera a partir de [este archivo XLS ](https://www5.ine.gub.uy/documents/Estad%C3%ADsticasecon%C3%B3micas/SERIES%20Y%20OTROS/Cotizaci%C3%B3n%20monedas/Cotizaci%C3%B3n%20monedas.xlsx).
 
 ## ¿Cómo se usa?
 
